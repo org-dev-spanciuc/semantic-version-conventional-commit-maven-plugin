@@ -1,0 +1,37 @@
+name: Create Tag
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  prepare-tag:
+    name: Prepare Tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Resolve Version
+        id: resolve-version
+        run: |
+          version=$(mvn help:evaluate -Dexpression='project.version' -q -DforceStdout)
+          if ! [[ "${version}" =~ ^[0-9]+(\.[0-9]+)*-SNAPSHOT$ ]];
+          then
+            echo "Expected valid "*-SNAPSHOT" version, but found: ${version}"
+            exit 1
+          fi
+          echo "version=${version:0:${#version} - 9}" >> $GITHUB_OUTPUT
+      - name: Create Branch
+        run: |
+          git switch -c tag-${{ steps.resolve-version.outputs.version }}
+          git push -u origin tag-${{ steps.resolve-version.outputs.version }}
+
+  perform-tag:
+    name: Perform Tag
+    needs: prepare-tag
+    uses: ./.github/workflows/perform-tag.yml
+    with:
+      version: ${{ needs.prepare-tag.outputs.version }}
+    secrets: inherit
+            

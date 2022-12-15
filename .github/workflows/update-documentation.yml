@@ -1,0 +1,33 @@
+name: Update Documentation
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [ "gh-pages" ]
+
+jobs:
+  update-index:
+    name: Update Index
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "gh-pages"
+      - name: Make script executable
+        run: chmod u+x ./update-versions.sh
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+      - name: Run update versions
+        run: ./update-versions.sh
+      - name: Github push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          git commit -m "ci: update versions" || echo "No changes to commit"
+          git push
