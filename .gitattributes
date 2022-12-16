@@ -1,0 +1,3 @@
+# keep the line separator for files.
+withHeaderMaxLength text eol=lf
+withoutHeaderMaxLength text eol=lf
