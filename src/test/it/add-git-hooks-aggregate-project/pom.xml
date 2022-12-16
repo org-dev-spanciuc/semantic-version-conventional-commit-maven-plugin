@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>test</groupId>
+    <artifactId>parent-project</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-TEST</version>
+
+    <modules>
+        <module>module-1</module>
+        <module>module-2</module>
+    </modules>
+
+    <properties>
+        <java.version>17</java.version>
+        <project.encoding>UTF-8</project.encoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>${project.encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org-dev-spanciuc</groupId>
+                    <artifactId>semantic-version-conventional-commit-maven-plugin</artifactId>
+                    <version>@project.version@</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>add-git-hooks</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org-dev-spanciuc</groupId>
+                <artifactId>semantic-version-conventional-commit-maven-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
