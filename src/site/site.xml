@@ -1,0 +1,39 @@
+<project>
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.11.1</version>
+    </skin>
+
+    <bannerLeft>
+        <name>${project.name}</name>
+        <src>https://maven.apache.org/images/apache-maven-project.png</src>
+        <href>https://maven.apache.org/</href>
+    </bannerLeft>
+
+    <edit>${project.scm.url}</edit>
+
+    <body>
+        <breadcrumbs>
+            <item name="Ref" href="../"/>
+            <item name="Maven ${project.version}" href="./"/>
+        </breadcrumbs>
+
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+            <item name="Goals" href="plugin-info.html"/>
+            <item name="JavaDocs" href="apidocs/index.html"/>
+            <item name="Source Xref" href="xref/index.html"/>
+            <item name="License" href="http://www.apache.org/licenses/"/>
+        </menu>
+
+        <menu ref="modules"/>
+        <menu ref="reports"/>
+
+        <menu name="SonarQube Analysis">
+            <item name="Report"
+                  href="https://sonarcloud.io/project/overview?id=org-dev-spanciuc_semantic-version-conventional-commit-maven-plugin"/>
+        </menu>
+    </body>
+</project>

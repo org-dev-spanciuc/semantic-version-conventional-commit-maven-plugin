@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+if ! head -1 "$1" | grep -qE "^(docs|feat|fix|refactor|test)(\(.+?\))?!?: .{1,}$"; then
+    echo "Aborting commit. Your commit message is invalid." >&2
+    cat "$1"
+    exit 1
+fi

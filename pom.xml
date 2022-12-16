@@ -4,8 +4,8 @@
 
     <groupId>org-dev-spanciuc</groupId>
     <artifactId>semantic-version-conventional-commit-maven-plugin</artifactId>
-    <packaging>jar</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <packaging>maven-plugin</packaging>
+    <version>1.0.0-SNAPSHOT</version>
     <name>Semantic Version Conventional Commit Maven Plugin</name>
     <description>Maven plugin for semantic versioning using conventional commits specification.</description>
     <inceptionYear>2022</inceptionYear>
@@ -72,6 +72,12 @@
         <siteScmBranch>gh-pages</siteScmBranch>
         <lombok.version>1.18.24</lombok.version>
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
+        <maven-plugin-api.version>3.8.6</maven-plugin-api.version>
+        <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
+        <maven-plugin-plugin.version>3.7.0</maven-plugin-plugin.version>
+        <maven-invoker-plugin.version>3.3.0</maven-invoker-plugin.version>
+        <groovy-yaml.version>4.0.6</groovy-yaml.version>
+        <org.eclipse.jgit.version>6.3.0.202209071007-r</org.eclipse.jgit.version>
     </properties>
 
     <dependencyManagement>
@@ -107,6 +113,23 @@
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${maven-plugin-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${maven-plugin-annotations.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>${org.eclipse.jgit.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -134,6 +157,18 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
         </dependency>
     </dependencies>
 
@@ -213,6 +248,42 @@
                         <checkinComment>Publish v${project.version}</checkinComment>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>${maven-plugin-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>${maven-invoker-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.groovy</groupId>
+                            <artifactId>groovy-yaml</artifactId>
+                            <version>${groovy-yaml.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <addTestClassPath>true</addTestClassPath>
+                        <projectsDirectory>src/test/it</projectsDirectory>
+                        <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                        <settingsFile>src/test/it/settings.xml</settingsFile>
+                        <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                        <preBuildHookScript>setup</preBuildHookScript>
+                        <postBuildHookScript>verify</postBuildHookScript>
+                        <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>install</goal>
+                                <goal>run</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -272,6 +343,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-publish-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
