@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CommitMsgConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Semantic Version Conventional Commit Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.dev.spanciuc.maven.mojo.githooks.commit_msg</a> &gt; <span class="el_source">CommitMsgConfiguration.java</span></div><h1>CommitMsgConfiguration.java</h1><pre class="source lang-java linenums">package org.dev.spanciuc.maven.mojo.githooks.commit_msg;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import org.dev.spanciuc.maven.mojo.githooks.GitHookConfiguration;
+import org.dev.spanciuc.maven.mojo.githooks.GitHookFileGenerator;
+import org.dev.spanciuc.maven.mojo.githooks.utils.Messages;
+import org.dev.spanciuc.maven.mojo.githooks.utils.ParameterSanitizer;
+
+import java.util.*;
+
+/**
+ * A class represents a commit-msg hook configuration.
+ */
+@Value
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+public class CommitMsgConfiguration implements GitHookConfiguration {
+
+    public static final String TYPES_SPLIT_CHAR = &quot;,&quot;;
+    static final int HEADER_MAX_LENGTH_MIN_ALLOWED_VALUE = 1;
+    public static final int UNRESTRICTED_HEADER_MAX_LENGTH_VALUE = -1;
+    String fileName;
+    boolean enabled;
+    int headerMaxLength;
+    SortedSet&lt;String&gt; types;
+
+    /**
+     * Creates an instance with the given parameters
+     * &lt;p&gt;
+     * This method sanitizes and validates the parameters.
+     * &lt;p&gt;
+     * For header max length parameter the valid value must be either
+     * {@value #UNRESTRICTED_HEADER_MAX_LENGTH_VALUE} or a positive integer number greater than 0.
+     *
+     * @param commitMsgParameters the parameters.
+     * @throws IllegalArgumentException if parameters object is null.
+     * @throws IllegalArgumentException if parameters object has invalid file name.
+     * @throws IllegalArgumentException if parameters object has invalid header max length.
+     * @throws IllegalArgumentException if parameters object has invalid types.
+     */
+<span class="fc" id="L42">    public CommitMsgConfiguration(CommitMsgParameters commitMsgParameters) {</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (null == commitMsgParameters) {</span>
+<span class="fc" id="L44">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L45">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                            Messages.VALUE_COMMIT_MESSAGE_PARAMETERS));
+        }
+<span class="fc" id="L48">        this.fileName = sanitizeFileName(commitMsgParameters.getFileName());</span>
+<span class="fc" id="L49">        this.enabled = commitMsgParameters.isEnabled();</span>
+<span class="fc" id="L50">        this.headerMaxLength = sanitizeHeaderMaxLength(commitMsgParameters.getHeaderMaxLength());</span>
+<span class="fc" id="L51">        this.types = sanitizeTypes(commitMsgParameters.getTypes());</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GitHookFileGenerator getGitHookFileGenerator() {
+<span class="fc" id="L59">        return new BashScriptCommitMsgHookGenerator(this);</span>
+    }
+
+    /**
+     * Gets an unmodifiable sorted set of allowed commit types.
+     *
+     * @return allowed commit types.
+     */
+    public Set&lt;String&gt; getTypes() {
+<span class="fc" id="L68">        return Collections.unmodifiableSortedSet(types);</span>
+    }
+
+    /**
+     * Checks if commit header has length restriction.
+     *
+     * @return true if it has restriction, otherwise - false.
+     */
+    public boolean hasHeaderMaxLengthRestriction() {
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        return headerMaxLength != UNRESTRICTED_HEADER_MAX_LENGTH_VALUE;</span>
+    }
+
+    private String sanitizeFileName(String fileName) {
+<span class="fc" id="L81">        return ParameterSanitizer.sanitizeRequiredStringParameter(fileName,</span>
+                Messages.VALUE_FILE_NAME);
+    }
+
+    private int sanitizeHeaderMaxLength(int headerMaxLength) {
+<span class="fc bfc" id="L86" title="All 4 branches covered.">        if (headerMaxLength != UNRESTRICTED_HEADER_MAX_LENGTH_VALUE &amp;&amp;</span>
+                headerMaxLength &lt; HEADER_MAX_LENGTH_MIN_ALLOWED_VALUE) {
+<span class="fc" id="L88">            throw new IllegalArgumentException(Messages.MESSAGE_INVALID_HEADER_MAX_LENGTH_VALUE);</span>
+        }
+<span class="fc" id="L90">        return headerMaxLength;</span>
+    }
+
+    private String sanitizeType(String type) {
+<span class="fc" id="L94">        return ParameterSanitizer.sanitizeRequiredStringParameter(type, Messages.VALUE_TYPE_NAME);</span>
+    }
+
+    private SortedSet&lt;String&gt; sanitizeTypes(String types) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (null == types) {</span>
+<span class="fc" id="L99">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L100">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                            Messages.VALUE_COMMIT_TYPES));
+        }
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (types.isEmpty()) {</span>
+<span class="fc" id="L104">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L105">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_EMPTY,</span>
+                            Messages.VALUE_COMMIT_TYPES));
+        }
+<span class="fc" id="L108">        SortedSet&lt;String&gt; result = new TreeSet&lt;&gt;();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (String type : types.split(TYPES_SPLIT_CHAR)) {</span>
+<span class="fc" id="L110">            String sanitizedType = sanitizeType(type);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (!result.add(sanitizedType)) {</span>
+<span class="fc" id="L112">                throw new IllegalArgumentException(</span>
+<span class="fc" id="L113">                        String.format(Messages.MESSAGE_DUPLICATE_TYPE_NAME, sanitizedType));</span>
+
+            }
+        }
+<span class="fc" id="L117">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

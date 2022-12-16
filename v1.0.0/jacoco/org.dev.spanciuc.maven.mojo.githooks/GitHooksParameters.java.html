@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GitHooksParameters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Semantic Version Conventional Commit Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.dev.spanciuc.maven.mojo.githooks</a> &gt; <span class="el_source">GitHooksParameters.java</span></div><h1>GitHooksParameters.java</h1><pre class="source lang-java linenums">package org.dev.spanciuc.maven.mojo.githooks;
+
+import lombok.AllArgsConstructor;
+import lombok.Value;
+import org.dev.spanciuc.maven.mojo.githooks.commit_msg.CommitMsgParameters;
+
+/**
+ * A class to hold git hooks configuration's parameters..
+ */
+@Value
+@AllArgsConstructor
+public class GitHooksParameters {
+
+    /**
+     * Default value for git directory name.
+     */
+    public static final String DEFAULT_GIT_DIRECTORY_NAME = &quot;.git&quot;;
+
+    /**
+     * Default value for git hooks directory name.
+     */
+    public static final String DEFAULT_GIT_HOOKS_DIRECTORY_NAME = &quot;.git/hooks&quot;;
+
+
+    /**
+     * Default value for enabled git hooks by default represented as string.
+     */
+    public static final String DEFAULT_ENABLED_AS_STRING = &quot;true&quot;;
+
+    /**
+     * Default value for enabled git hooks by default.
+     */
+<span class="fc" id="L33">    public static final boolean DEFAULT_ENABLED = Boolean.parseBoolean(DEFAULT_ENABLED_AS_STRING);</span>
+
+    /**
+     * Default commit-msg hook parameters.
+     */
+<span class="fc" id="L38">    public static final CommitMsgParameters DEFAULT_COMMIT_MSG_PARAMETERS =</span>
+            new CommitMsgParameters();
+
+    /**
+     * Whether git hooks are enabled.
+     *
+     * @return true if enabled, otherwise - false.
+     */
+    boolean enabled;
+
+    /**
+     * The git directory name.
+     *
+     * @return directory name.
+     */
+    String gitDirectoryName;
+
+    /**
+     * The git hook's directory name.
+     *
+     * @return git hook's directory name.
+     */
+    String gitHooksDirectoryName;
+
+    /**
+     * The commit message hook parameters.
+     *
+     * @return commit message parameters.
+     */
+    CommitMsgParameters commitMsg;
+
+    /**
+     * Creates an instance with default values.
+     */
+    public GitHooksParameters() {
+<span class="fc" id="L73">        this(DEFAULT_ENABLED, DEFAULT_GIT_DIRECTORY_NAME, DEFAULT_GIT_HOOKS_DIRECTORY_NAME,</span>
+                DEFAULT_COMMIT_MSG_PARAMETERS);
+<span class="fc" id="L75">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

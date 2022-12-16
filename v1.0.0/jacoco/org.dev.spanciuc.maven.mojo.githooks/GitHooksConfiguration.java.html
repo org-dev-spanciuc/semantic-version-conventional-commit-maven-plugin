@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GitHooksConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Semantic Version Conventional Commit Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.dev.spanciuc.maven.mojo.githooks</a> &gt; <span class="el_source">GitHooksConfiguration.java</span></div><h1>GitHooksConfiguration.java</h1><pre class="source lang-java linenums">package org.dev.spanciuc.maven.mojo.githooks;
+
+import org.dev.spanciuc.maven.mojo.githooks.commit_msg.CommitMsgConfiguration;
+import org.dev.spanciuc.maven.mojo.githooks.exceptions.GitHooksAreDisabledException;
+import org.dev.spanciuc.maven.mojo.githooks.exceptions.NoEnabledGitHooksFoundException;
+import org.dev.spanciuc.maven.mojo.githooks.utils.Messages;
+import org.dev.spanciuc.maven.mojo.githooks.utils.ParameterSanitizer;
+
+import java.util.List;
+
+/**
+ * A class represents git hooks configuration parameters.
+ */
+public class GitHooksConfiguration {
+
+    private final String gitDirectoryName;
+
+    private final String gitHooksDirectoryName;
+
+    private final boolean enabled;
+
+    private final List&lt;GitHookConfiguration&gt; gitHooksConfigurations;
+
+    /**
+     * Creates a configuration instance with given parameters.
+     * &lt;p&gt;
+     * This method sanitizes and validates parameters value. In case of invalid parameters, an
+     * exception will be thrown.
+     *
+     * @param gitHooksParameters the parameters.
+     * @throws IllegalArgumentException if parameters object is null.
+     * @throws IllegalArgumentException if parameters object has invalid git directory name.
+     * @throws IllegalArgumentException if parameters object has invalid git hooks directory name.
+     * @throws IllegalArgumentException if parameters object has invalid commit-msg parameters.
+     */
+<span class="fc" id="L36">    public GitHooksConfiguration(GitHooksParameters gitHooksParameters) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (null == gitHooksParameters) {</span>
+<span class="fc" id="L38">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L39">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                            Messages.VALUE_GIT_HOOKS_PARAMETERS));
+        }
+<span class="fc" id="L42">        this.gitDirectoryName = sanitizeGitDirectoryName(gitHooksParameters.getGitDirectoryName());</span>
+<span class="fc" id="L43">        this.gitHooksDirectoryName =</span>
+<span class="fc" id="L44">                sanitizeGitHooksDirectoryName(gitHooksParameters.getGitHooksDirectoryName());</span>
+<span class="fc" id="L45">        this.enabled = gitHooksParameters.isEnabled();</span>
+<span class="fc" id="L46">        this.gitHooksConfigurations =</span>
+<span class="fc" id="L47">                List.of(new CommitMsgConfiguration(gitHooksParameters.getCommitMsg()));</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Gets enabled hooks generators.
+     * &lt;p&gt;
+     * Checks if git hooks are enabled and has at least one enabled git hook. If so return an
+     * unmodifiable list of generators.
+     *
+     * @return generator's list.
+     * @throws GitHooksAreDisabledException    if git hooks are disabled.
+     * @throws NoEnabledGitHooksFoundException if no enabled git hooks found.
+     */
+    public List&lt;GitHookFileGenerator&gt; getEnabledHooksGenerators()
+            throws GitHooksAreDisabledException, NoEnabledGitHooksFoundException {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (!isEnabled()) {</span>
+<span class="fc" id="L63">            throw new GitHooksAreDisabledException();</span>
+        }
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (!hasEnabledHooks()) {</span>
+<span class="fc" id="L66">            throw new NoEnabledGitHooksFoundException();</span>
+        }
+<span class="fc" id="L68">        return gitHooksConfigurations.stream()</span>
+<span class="fc" id="L69">                .filter(GitHookConfiguration::isEnabled)</span>
+<span class="fc" id="L70">                .map(GitHookConfiguration::getGitHookFileGenerator)</span>
+<span class="fc" id="L71">                .toList();</span>
+    }
+
+    /**
+     * Gets the git directory name
+     *
+     * @return git directory name.
+     */
+    public String getGitDirectoryName() {
+<span class="fc" id="L80">        return gitDirectoryName;</span>
+    }
+
+    /**
+     * Gets the git hooks directory name
+     *
+     * @return git hooks directory name.
+     */
+    public String getGitHooksDirectoryName() {
+<span class="fc" id="L89">        return gitHooksDirectoryName;</span>
+    }
+
+    /**
+     * Checks if at least one hook is enabled.
+     *
+     * @return true if at least one hook is enabled, otherwise - false.
+     */
+    public boolean hasEnabledHooks() {
+<span class="fc" id="L98">        return gitHooksConfigurations.stream().anyMatch(GitHookConfiguration::isEnabled);</span>
+    }
+
+    /**
+     * Checks  if git hooks are globally enabled.
+     *
+     * @return true if enabled, otherwise - false.
+     */
+    public boolean isEnabled() {
+<span class="fc" id="L107">        return enabled;</span>
+    }
+
+    private String sanitizeGitDirectoryName(String gitDirectoryName) {
+<span class="fc" id="L111">        return ParameterSanitizer.sanitizeRequiredStringParameter(gitDirectoryName,</span>
+                Messages.VALUE_GIT_DIRECTORY_NAME);
+    }
+
+    private String sanitizeGitHooksDirectoryName(String gitHooksDirectoryName) {
+<span class="fc" id="L116">        return ParameterSanitizer.sanitizeRequiredStringParameter(gitHooksDirectoryName,</span>
+                Messages.VALUE_GIT_HOOKS_DIRECTORY_NAME);
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

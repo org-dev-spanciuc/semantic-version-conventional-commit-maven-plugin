@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParameterSanitizer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Semantic Version Conventional Commit Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.dev.spanciuc.maven.mojo.githooks.utils</a> &gt; <span class="el_source">ParameterSanitizer.java</span></div><h1>ParameterSanitizer.java</h1><pre class="source lang-java linenums">package org.dev.spanciuc.maven.mojo.githooks.utils;
+
+/**
+ * Utility class for parameters sanitization.
+ */
+public class ParameterSanitizer {
+
+    /**
+     * To prevent instance creation.
+     */
+    private ParameterSanitizer() {
+    }
+
+    /**
+     * Sanitizes a required string parameter.
+     * &lt;p&gt;
+     * Checks if value is not null and does not contain only white spaces. If so, removes leading
+     * and trailing white spaces and return the value.
+     *
+     * @param value     value to sanitize.
+     * @param valueName the parameter name.
+     * @return sanitized value.
+     * @throws IllegalArgumentException if the value is null.
+     * @throws IllegalArgumentException if the value contains only white spaces.
+     */
+    public static String sanitizeRequiredStringParameter(String value, String valueName) {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (null == value) {</span>
+<span class="fc" id="L28">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L29">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL, valueName));</span>
+        }
+<span class="fc" id="L31">        String result = value.strip();</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (result.isEmpty()) {</span>
+<span class="fc" id="L33">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L34">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_EMPTY, valueName));</span>
+        }
+<span class="fc" id="L36">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"org.dev.spanciuc.maven.mojo.githooks"},{"l":"org.dev.spanciuc.maven.mojo.githooks.commit_msg"},{"l":"org.dev.spanciuc.maven.mojo.githooks.exceptions"},{"l":"org.dev.spanciuc.maven.mojo.githooks.utils"}];updateSearchResults();

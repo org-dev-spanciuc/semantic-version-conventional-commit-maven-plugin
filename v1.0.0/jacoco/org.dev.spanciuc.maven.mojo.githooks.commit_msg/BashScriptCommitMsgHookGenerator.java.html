@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BashScriptCommitMsgHookGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Semantic Version Conventional Commit Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.dev.spanciuc.maven.mojo.githooks.commit_msg</a> &gt; <span class="el_source">BashScriptCommitMsgHookGenerator.java</span></div><h1>BashScriptCommitMsgHookGenerator.java</h1><pre class="source lang-java linenums">package org.dev.spanciuc.maven.mojo.githooks.commit_msg;
+
+import org.dev.spanciuc.maven.mojo.githooks.GitHookFileGenerator;
+import org.dev.spanciuc.maven.mojo.githooks.exceptions.RuntimeIOException;
+import org.dev.spanciuc.maven.mojo.githooks.utils.Messages;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+/**
+ * A class representing bash script commit-msg hook generator.
+ * &lt;p&gt;
+ * It's used to create a hook file in a given directory.
+ */
+public class BashScriptCommitMsgHookGenerator implements GitHookFileGenerator {
+
+    private final CommitMsgConfiguration commitMessageConfiguration;
+
+    /**
+     * Creates a generator instance for given configuration.
+     *
+     * @param commitMessageConfiguration the commit-msg hook configuration.
+     * @throws IllegalArgumentException if configuration object is null.
+     */
+<span class="fc" id="L26">    public BashScriptCommitMsgHookGenerator(CommitMsgConfiguration commitMessageConfiguration) {</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (null == commitMessageConfiguration) {</span>
+<span class="fc" id="L28">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L29">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                            Messages.TYPE_COMMIT_MESSAGE_CONFIGURATION));
+        }
+<span class="fc" id="L32">        this.commitMessageConfiguration = commitMessageConfiguration;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws IllegalStateException if trying to generate a disabled hook.
+     * @throws IllegalStateException if parentDirectory is null.
+     */
+    @Override
+    public File generate(File parentDirectory) {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (!commitMessageConfiguration.isEnabled()) {</span>
+<span class="fc" id="L44">            throw new IllegalStateException(</span>
+                    Messages.MESSAGE_CALLED_GENERATE_METHOD_ON_DISABLED_HOOK_MESSAGE);
+        }
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (null == parentDirectory) {</span>
+<span class="fc" id="L48">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L49">                    String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                            Messages.TYPE_PARENT_DIRECTORY));
+        }
+<span class="fc" id="L52">        String scriptContent = generateScriptContent();</span>
+<span class="fc" id="L53">        return generateScriptFile(parentDirectory, scriptContent);</span>
+    }
+
+    /**
+     * Gets the commit-msg hook filename.
+     *
+     * @return the filename.
+     */
+    @Override
+    public String getFileName() {
+<span class="fc" id="L63">        return commitMessageConfiguration.getFileName();</span>
+    }
+
+    private String generateScriptContent() {
+<span class="fc" id="L67">        return BashScriptContentBuilder.build(commitMessageConfiguration);</span>
+    }
+
+    private File generateScriptFile(File parentDirectory, String scriptContent) {
+<span class="fc" id="L71">        return BashScriptFileWriter.createAndWrite(parentDirectory,</span>
+<span class="fc" id="L72">                commitMessageConfiguration.getFileName(), scriptContent);</span>
+    }
+
+    static final class BashScriptFileWriter {
+
+        private BashScriptFileWriter() {
+        }
+
+        public static File createAndWrite(File parentDirectory, String fileName,
+                                          String fileContent) {
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if (null == parentDirectory) {</span>
+<span class="fc" id="L83">                throw new IllegalArgumentException(</span>
+<span class="fc" id="L84">                        String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                                Messages.TYPE_PARENT_DIRECTORY));
+            }
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            if (null == fileName) {</span>
+<span class="fc" id="L88">                throw new IllegalArgumentException(</span>
+<span class="fc" id="L89">                        String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                                Messages.TYPE_FILE_NAME));
+            }
+
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if (null == fileContent) {</span>
+<span class="fc" id="L94">                throw new IllegalArgumentException(</span>
+<span class="fc" id="L95">                        String.format(Messages.MESSAGE_VALUE_MUST_NOT_BE_NULL,</span>
+                                Messages.TYPE_FILE_CONTENT));
+            }
+
+<span class="fc" id="L99">            File file = new File(parentDirectory, fileName);</span>
+<span class="fc" id="L100">            try (FileWriter fw = new FileWriter(file)) {</span>
+<span class="fc" id="L101">                fw.write(fileContent);</span>
+<span class="fc" id="L102">            } catch (IOException e) {</span>
+<span class="fc" id="L103">                throw new RuntimeIOException(e.getMessage(), e);</span>
+<span class="fc" id="L104">            }</span>
+<span class="fc" id="L105">            return file;</span>
+        }
+    }
+
+    static final class BashScriptContentBuilder {
+
+        public static final String LINE_SEPARATOR = &quot;\n&quot;;
+        private static final String TEMPLATE_BASH_SCRIPT_HEADER = &quot;#!/usr/bin/env bash&quot;;
+        private static final String TEMPLATE_COMMIT_TYPES_DELIMITER = &quot;|&quot;;
+        private static final String TEMPLATE_COMMIT_MESSAGE_CHECK = &quot;&quot;&quot;
+                if ! head -1 &quot;$1&quot; | grep -qE &quot;^(%s)(\\(.+?\\))?!?: .{1,}$&quot;; then
+                    echo &quot;Aborting commit. Your commit message is invalid.&quot; &gt;&amp;2
+                    cat &quot;$1&quot;
+                    exit 1
+                fi&quot;&quot;&quot;;
+        private static final String TEMPLATE_COMMIT_MESSAGE_HEADER_LENGTH_CHECK = &quot;&quot;&quot;
+                if ! head -1 &quot;$1&quot; | grep -qE &quot;^.{1,%s}$&quot;; then
+                    echo &quot;Aborting commit. Your commit message is too long. Max %s characters allowed.&quot; &gt;&amp;2
+                    exit 1
+                fi&quot;&quot;&quot;;
+
+        private BashScriptContentBuilder() {
+        }
+
+        public static String build(CommitMsgConfiguration commitMsgConfiguration) {
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (null == commitMsgConfiguration) {</span>
+<span class="fc" id="L132">                throw new IllegalArgumentException(Messages.MUST_NOT_BE_NULL_MESSAGE);</span>
+            }
+
+<span class="fc" id="L135">            StringBuilder scriptContent = new StringBuilder(TEMPLATE_BASH_SCRIPT_HEADER);</span>
+<span class="fc" id="L136">            scriptContent.append(LINE_SEPARATOR);</span>
+<span class="fc" id="L137">            scriptContent.append(String.format(TEMPLATE_COMMIT_MESSAGE_CHECK,</span>
+<span class="fc" id="L138">                    String.join(TEMPLATE_COMMIT_TYPES_DELIMITER,</span>
+<span class="fc" id="L139">                            commitMsgConfiguration.getTypes())));</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">            if (commitMsgConfiguration.hasHeaderMaxLengthRestriction()) {</span>
+<span class="fc" id="L141">                int headerMaxLength = commitMsgConfiguration.getHeaderMaxLength();</span>
+<span class="fc" id="L142">                scriptContent.append(LINE_SEPARATOR);</span>
+<span class="fc" id="L143">                scriptContent.append(</span>
+<span class="fc" id="L144">                        String.format(TEMPLATE_COMMIT_MESSAGE_HEADER_LENGTH_CHECK, headerMaxLength,</span>
+<span class="fc" id="L145">                                headerMaxLength));</span>
+            }
+<span class="fc" id="L147">            return scriptContent.toString();</span>
+
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

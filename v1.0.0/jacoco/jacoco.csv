@@ -1,0 +1,13 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks,GitHooksConfiguration,0,88,0,6,0,25,0,11,0,8
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks,AddGitHooksMojo,0,334,0,12,0,72,0,15,0,9
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks,GitHooksParameters,0,15,0,0,0,4,0,2,0,2
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.exceptions,RuntimeIOException,0,5,0,0,0,2,0,1,0,1
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.exceptions,GitHooksAreDisabledException,0,8,0,0,0,4,0,2,0,2
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.exceptions,NoEnabledGitHooksFoundException,0,8,0,0,0,4,0,2,0,2
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.utils,ParameterSanitizer,0,35,0,4,0,8,0,3,0,1
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.commit_msg,BashScriptCommitMsgHookGenerator,0,68,0,6,0,17,0,8,0,5
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.commit_msg,CommitMsgParameters,0,14,0,0,0,5,0,2,0,2
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.commit_msg,BashScriptCommitMsgHookGenerator.BashScriptContentBuilder,0,61,0,4,0,14,0,3,0,1
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.commit_msg,CommitMsgConfiguration,0,152,0,16,0,30,0,16,0,8
+Semantic Version Conventional Commit Maven Plugin,org.dev.spanciuc.maven.mojo.githooks.commit_msg,BashScriptCommitMsgHookGenerator.BashScriptFileWriter,0,70,0,6,0,16,0,4,0,1

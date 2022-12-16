@@ -1,0 +1,4 @@
+org.dev.spanciuc.maven.mojo.githooks
+org.dev.spanciuc.maven.mojo.githooks.commit_msg
+org.dev.spanciuc.maven.mojo.githooks.exceptions
+org.dev.spanciuc.maven.mojo.githooks.utils

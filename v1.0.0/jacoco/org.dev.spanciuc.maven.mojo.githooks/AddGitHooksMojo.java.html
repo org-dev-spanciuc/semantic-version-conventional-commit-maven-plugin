@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddGitHooksMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Semantic Version Conventional Commit Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.dev.spanciuc.maven.mojo.githooks</a> &gt; <span class="el_source">AddGitHooksMojo.java</span></div><h1>AddGitHooksMojo.java</h1><pre class="source lang-java linenums">package org.dev.spanciuc.maven.mojo.githooks;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.dev.spanciuc.maven.mojo.githooks.commit_msg.CommitMsgParameters;
+import org.dev.spanciuc.maven.mojo.githooks.exceptions.GitHooksAreDisabledException;
+import org.dev.spanciuc.maven.mojo.githooks.exceptions.NoEnabledGitHooksFoundException;
+import org.dev.spanciuc.maven.mojo.githooks.utils.Messages;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A Mojo class to add git hooks to the project.
+ */
+@Mojo(name = &quot;add-git-hooks&quot;, defaultPhase = LifecyclePhase.INITIALIZE)
+public class AddGitHooksMojo extends AbstractMojo {
+
+    /**
+     * The project's base dir.
+     */
+    @Parameter(defaultValue = &quot;${project.basedir}&quot;, readonly = true)
+    private File basedir;
+
+    /**
+     * Whether git hooks are enabled.
+     */
+    @Parameter(property = &quot;gitHooksEnabled&quot;,
+            defaultValue = GitHooksParameters.DEFAULT_ENABLED_AS_STRING)
+    private boolean gitHooksEnabled;
+
+    /**
+     * The git directory name.
+     */
+    @Parameter(property = &quot;gitDirectory&quot;,
+            defaultValue = GitHooksParameters.DEFAULT_GIT_DIRECTORY_NAME)
+    private String gitDirectory;
+
+    /**
+     * The git hook's directory name.
+     */
+    @Parameter(property = &quot;gitHooksDirectory&quot;,
+            defaultValue = GitHooksParameters.DEFAULT_GIT_HOOKS_DIRECTORY_NAME)
+    private String gitHooksDirectory;
+
+    /**
+     * Whether the hook is enabled.
+     */
+    @Parameter(property = &quot;commitMsgEnabled&quot;,
+            defaultValue = CommitMsgParameters.DEFAULT_ENABLED_AS_STRING)
+    private boolean commitMsgEnabled;
+
+    /**
+     * The hook's file name.
+     */
+    @Parameter(property = &quot;commitMsgFileName&quot;, defaultValue = CommitMsgParameters.DEFAULT_FILE_NAME)
+    private String commitMsgFileName;
+
+    /**
+     * The max allowed length for commit header. For unrestricted length
+     * use:{@value
+     * org.dev.spanciuc.maven.mojo.githooks.commit_msg.CommitMsgConfiguration#UNRESTRICTED_HEADER_MAX_LENGTH_VALUE}
+     */
+    @Parameter(property = &quot;commitMsgHeaderMaxLength&quot;,
+            defaultValue = CommitMsgParameters.DEFAULT_HEADER_MAX_LENGTH_AS_STRING)
+    private int commitMsgHeaderMaxLength;
+
+    /**
+     * The list of comma separated allowed commit types.
+     * &lt;p&gt;
+     * Ex. &quot;feat,fix,docs&quot;
+     */
+    @Parameter(property = &quot;commitMsgTypes&quot;, defaultValue = CommitMsgParameters.DEFAULT_TYPES)
+    private String commitMsgTypes;
+
+    /**
+     * Creates an instance.
+     */
+<span class="fc" id="L82">    public AddGitHooksMojo() {</span>
+<span class="fc" id="L83">        this.gitHooksEnabled = GitHooksParameters.DEFAULT_ENABLED;</span>
+<span class="fc" id="L84">        this.gitDirectory = GitHooksParameters.DEFAULT_GIT_DIRECTORY_NAME;</span>
+<span class="fc" id="L85">        this.gitHooksDirectory = GitHooksParameters.DEFAULT_GIT_HOOKS_DIRECTORY_NAME;</span>
+<span class="fc" id="L86">        this.commitMsgEnabled = CommitMsgParameters.DEFAULT_ENABLED;</span>
+<span class="fc" id="L87">        this.commitMsgFileName = CommitMsgParameters.DEFAULT_FILE_NAME;</span>
+<span class="fc" id="L88">        this.commitMsgHeaderMaxLength = CommitMsgParameters.DEFAULT_HEADER_MAX_LENGTH;</span>
+<span class="fc" id="L89">        this.commitMsgTypes = CommitMsgParameters.DEFAULT_TYPES;</span>
+<span class="fc" id="L90">    }</span>
+
+    AddGitHooksMojo(File basedir, GitHooksParameters gitHooksParameters) {
+<span class="fc" id="L93">        this();</span>
+<span class="fc" id="L94">        this.basedir = basedir;</span>
+<span class="fc" id="L95">        this.gitHooksEnabled = gitHooksParameters.isEnabled();</span>
+<span class="fc" id="L96">        this.gitDirectory = gitHooksParameters.getGitDirectoryName();</span>
+<span class="fc" id="L97">        this.gitHooksDirectory = gitHooksParameters.getGitHooksDirectoryName();</span>
+<span class="fc" id="L98">        this.commitMsgEnabled = gitHooksParameters.getCommitMsg().isEnabled();</span>
+<span class="fc" id="L99">        this.commitMsgFileName = gitHooksParameters.getCommitMsg().getFileName();</span>
+<span class="fc" id="L100">        this.commitMsgHeaderMaxLength = gitHooksParameters.getCommitMsg().getHeaderMaxLength();</span>
+<span class="fc" id="L101">        this.commitMsgTypes = gitHooksParameters.getCommitMsg().getTypes();</span>
+<span class="fc" id="L102">    }</span>
+
+    /**
+     * {@inheritDoc}
+     * &lt;p&gt;
+     * This implementation generates hook files if and only if:
+     * &lt;ul&gt;
+     *   &lt;li&gt;current project is a git repository &lt;/li&gt;
+     *   &lt;li&gt;git hook directory can be created or already exists&lt;/li&gt;
+     *   &lt;li&gt;git hooks are globally enabled&lt;/li&gt;
+     *   &lt;li&gt;there are at least one individual enabled git hook&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * In case when current project is not a git repository or git hooks directory cannot be created,
+     * the execution will fail.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * In case when git hooks are globally disabled or there are no individual git hooks enabled,
+     * the execution will succeed but a warning will be displayed to inform that git hooks generation was skipped.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     *  By default generated git hooks files will override existent files in the target directory.
+     * &lt;/p&gt;
+     *
+     * @throws IllegalStateException if is not a git repository or git hooks folder cannot be
+     *                               created.
+     */
+    @Override
+    public void execute() {
+
+<span class="fc" id="L132">        CommitMsgParameters commitMsgParameters =</span>
+                new CommitMsgParameters(commitMsgEnabled, commitMsgFileName,
+                        commitMsgHeaderMaxLength, commitMsgTypes);
+
+<span class="fc" id="L136">        GitHooksParameters gitHooksParameters =</span>
+                new GitHooksParameters(gitHooksEnabled, gitDirectory, gitHooksDirectory,
+                        commitMsgParameters);
+
+<span class="fc" id="L140">        GitHooksConfiguration gitHooksConfiguration = new GitHooksConfiguration(gitHooksParameters);</span>
+
+        List&lt;GitHookFileGenerator&gt; enabledHooksGenerators;
+
+        try {
+<span class="fc" id="L145">            enabledHooksGenerators = getEnabledGitHookFileGenerators(gitHooksConfiguration);</span>
+<span class="fc" id="L146">        } catch (NoEnabledGitHooksFoundException | GitHooksAreDisabledException e) {</span>
+<span class="fc" id="L147">            getLog().warn(e.getMessage());</span>
+<span class="fc" id="L148">            getLog().info(String.format(Messages.CREATED_NUMBER_OF_HOOKS_MESSAGE, 0));</span>
+<span class="fc" id="L149">            return;</span>
+<span class="fc" id="L150">        }</span>
+
+<span class="fc" id="L152">        performChecks(gitHooksConfiguration);</span>
+<span class="fc" id="L153">        performHooksGeneration(enabledHooksGenerators,</span>
+<span class="fc" id="L154">                gitHooksConfiguration.getGitHooksDirectoryName());</span>
+<span class="fc" id="L155">    }</span>
+
+    private void checkGitHooksDirectory(String gitHooksDirectoryName) {
+<span class="fc" id="L158">        File gitHooksDir = new File(basedir, gitHooksDirectoryName);</span>
+
+<span class="fc bfc" id="L160" title="All 4 branches covered.">        if (gitHooksDir.exists() &amp;&amp; !gitHooksDir.isDirectory()) {</span>
+<span class="fc" id="L161">            getLog().warn(String.format(Messages.GIT_HOOKS_DIRECTORY_CHECK_MESSAGE,</span>
+                    Messages.CHECK_STATUS_FAIL));
+<span class="fc" id="L163">            throw new IllegalStateException(Messages.NOT_A_DIRECTORY_MESSAGE);</span>
+        }
+<span class="fc" id="L165">        getLog().info(String.format(Messages.GIT_HOOKS_DIRECTORY_CHECK_MESSAGE,</span>
+                Messages.CHECK_STATUS_SUCCESS));
+<span class="fc" id="L167">    }</span>
+
+    private void checkIsGitRepository(String gitDirectoryName) {
+<span class="fc" id="L170">        File gitRepoDirectory = new File(basedir, gitDirectoryName);</span>
+<span class="fc bfc" id="L171" title="All 4 branches covered.">        if (!gitRepoDirectory.exists() || !gitRepoDirectory.isDirectory()) {</span>
+<span class="fc" id="L172">            getLog().warn(String.format(Messages.IS_GIT_REPOSITORY_CHECK_MESSAGE,</span>
+                    Messages.CHECK_STATUS_FAIL));
+<span class="fc" id="L174">            throw new IllegalStateException(Messages.NOT_A_GIT_REPOSITORY_MESSAGE);</span>
+        }
+<span class="fc" id="L176">        getLog().info(String.format(Messages.IS_GIT_REPOSITORY_CHECK_MESSAGE,</span>
+                Messages.CHECK_STATUS_SUCCESS));
+<span class="fc" id="L178">    }</span>
+
+    private File createOrGetGitHooksDirectory(String gitHooksDirectoryName) {
+<span class="fc" id="L181">        File gitHooksDir = new File(basedir, gitHooksDirectoryName);</span>
+
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (!gitHooksDir.mkdirs()) {</span>
+<span class="fc" id="L184">            getLog().info(String.format(Messages.FOUND_EXISTENT_FILE_MESSAGE,</span>
+<span class="fc" id="L185">                    gitHooksDir.getPath()));</span>
+        } else {
+<span class="fc" id="L187">            getLog().info(String.format(Messages.CREATED_NEW_DIRECTORY_MESSAGE,</span>
+<span class="fc" id="L188">                    gitHooksDir.getPath()));</span>
+        }
+<span class="fc" id="L190">        return gitHooksDir;</span>
+    }
+
+    private List&lt;GitHookFileGenerator&gt; getEnabledGitHookFileGenerators(
+            GitHooksConfiguration gitHooksConfiguration)
+            throws GitHooksAreDisabledException, NoEnabledGitHooksFoundException {
+
+<span class="fc" id="L197">        List&lt;GitHookFileGenerator&gt; enabledHooksGenerators =</span>
+<span class="fc" id="L198">                gitHooksConfiguration.getEnabledHooksGenerators();</span>
+<span class="fc" id="L199">        getLog().info(String.format(Messages.FOUND_NUMBER_OF_ENABLED_HOOKS_MESSAGE,</span>
+<span class="fc" id="L200">                enabledHooksGenerators.size()));</span>
+<span class="fc" id="L201">        return enabledHooksGenerators;</span>
+    }
+
+    private void performChecks(GitHooksConfiguration gitHooksConfiguration) {
+<span class="fc" id="L205">        getLog().info(Messages.STARTING_CHECKS_MESSAGE);</span>
+<span class="fc" id="L206">        checkIsGitRepository(gitHooksConfiguration.getGitDirectoryName());</span>
+<span class="fc" id="L207">        checkGitHooksDirectory(gitHooksConfiguration.getGitHooksDirectoryName());</span>
+<span class="fc" id="L208">        getLog().info(Messages.SUCCESSFULLY_PASSED_ALL_CHECKS_MESSAGE);</span>
+<span class="fc" id="L209">    }</span>
+
+    private void performHooksGeneration(List&lt;GitHookFileGenerator&gt; enabledHooksGenerators,
+                                        String gitHooksDirectoryName) {
+
+<span class="fc" id="L214">        getLog().info(Messages.STARTING_HOOKS_GENERATION_MESSAGE);</span>
+
+<span class="fc" id="L216">        File targetHooksDirectory = createOrGetGitHooksDirectory(gitHooksDirectoryName);</span>
+
+<span class="fc" id="L218">        List&lt;File&gt; hookFiles = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        for (GitHookFileGenerator hookGenerator : enabledHooksGenerators) {</span>
+<span class="fc" id="L221">            File hookFile = hookGenerator.generate(targetHooksDirectory);</span>
+<span class="fc" id="L222">            getLog().info(String.format(Messages.HOOK_BY_NAME_SUCCESSFULLY_GENERATED_MESSAGE,</span>
+<span class="fc" id="L223">                    hookFile.getPath()));</span>
+<span class="fc" id="L224">            hookFiles.add(hookFile);</span>
+<span class="fc" id="L225">        }</span>
+<span class="fc" id="L226">        getLog().info(String.format(Messages.CREATED_NUMBER_OF_HOOKS_MESSAGE, hookFiles.size()));</span>
+<span class="fc" id="L227">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
