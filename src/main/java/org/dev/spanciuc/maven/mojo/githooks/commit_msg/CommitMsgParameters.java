@@ -24,6 +24,7 @@ public class CommitMsgParameters {
     /**
      * The default enabled value.
      */
+    @SuppressWarnings("ConstantConditions")
     public static final boolean DEFAULT_ENABLED = Boolean.parseBoolean(DEFAULT_ENABLED_AS_STRING);
 
     /**
@@ -48,6 +49,7 @@ public class CommitMsgParameters {
      *
      * @return true if enabled, otherwise - false.
      */
+    @SuppressWarnings("JavadocDeclaration")
     boolean enabled;
 
     /**
@@ -55,6 +57,7 @@ public class CommitMsgParameters {
      *
      * @return fileName.
      */
+    @SuppressWarnings("JavadocDeclaration")
     String fileName;
 
     /**
@@ -64,11 +67,15 @@ public class CommitMsgParameters {
      *
      * @return max allowed length.
      */
+    @SuppressWarnings("JavadocDeclaration")
     int headerMaxLength;
 
     /**
      * The list of allowed commit types as comma separated values.
+     *
+     * @return allowed commit types.
      */
+    @SuppressWarnings("JavadocDeclaration")
     String types;
 
     /**

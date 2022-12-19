@@ -8,7 +8,10 @@ import org.dev.spanciuc.maven.mojo.githooks.GitHookFileGenerator;
 import org.dev.spanciuc.maven.mojo.githooks.utils.Messages;
 import org.dev.spanciuc.maven.mojo.githooks.utils.ParameterSanitizer;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * A class represents a commit-msg hook configuration.
@@ -17,12 +20,49 @@ import java.util.*;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class CommitMsgConfiguration implements GitHookConfiguration {
 
+    /**
+     * The character used as delimiter for the type parameter.
+     */
     public static final String TYPES_SPLIT_CHAR = ",";
-    static final int HEADER_MAX_LENGTH_MIN_ALLOWED_VALUE = 1;
+
+    /**
+     * The value represents unrestricted header max length.
+     */
     public static final int UNRESTRICTED_HEADER_MAX_LENGTH_VALUE = -1;
+    static final int HEADER_MAX_LENGTH_MIN_ALLOWED_VALUE = 1;
+
+    /**
+     * The hook's file name.
+     *
+     * @return fileName.
+     */
+    @SuppressWarnings("JavadocDeclaration")
     String fileName;
+
+    /**
+     * Whether the hook is enabled.
+     *
+     * @return true if enabled, otherwise - false.
+     */
+    @SuppressWarnings("JavadocDeclaration")
     boolean enabled;
+
+    /**
+     * The max allowed length for commit header. For unrestricted length
+     * use:{@value
+     * org.dev.spanciuc.maven.mojo.githooks.commit_msg.CommitMsgConfiguration#UNRESTRICTED_HEADER_MAX_LENGTH_VALUE}
+     *
+     * @return max allowed length.
+     */
+    @SuppressWarnings("JavadocDeclaration")
     int headerMaxLength;
+
+    /**
+     * The list of allowed commit types as comma separated values.
+     *
+     * @return allowed commit types.
+     */
+    @SuppressWarnings("JavadocDeclaration")
     SortedSet<String> types;
 
     /**

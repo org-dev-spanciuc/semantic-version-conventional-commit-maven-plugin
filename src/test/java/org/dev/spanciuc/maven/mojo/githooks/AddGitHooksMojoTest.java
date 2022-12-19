@@ -27,7 +27,8 @@ class AddGitHooksMojoTest {
                 new GitHooksParameters(true, gitDirectory, hooksDirectory, commitMsgParameters);
         AddGitHooksMojo mojo = new AddGitHooksMojo(basedir, parameters);
         File gitFolder = new File(basedir, gitDirectory);
-        gitFolder.mkdir();
+        boolean created = gitFolder.mkdir();
+        assertTrue(created);
         mojo.execute();
         assertTrue(Files.exists(
                 Path.of(basedir.toString(), hooksDirectory, commitMsgParameters.getFileName())
@@ -59,8 +60,9 @@ class AddGitHooksMojoTest {
                 new GitHooksParameters(true, gitDirectory, hooksDirectory, commitMsgParameters);
         AddGitHooksMojo mojo = new AddGitHooksMojo(basedir, parameters);
         File gitFolder = new File(basedir, gitDirectory);
-        gitFolder.mkdir();
-         mojo.execute();
+        boolean created = gitFolder.mkdir();
+        assertTrue(created);
+        mojo.execute();
         assertTrue(Files.exists(Path.of(basedir.getPath(), hooksDirectory)));
     }
 
@@ -75,9 +77,11 @@ class AddGitHooksMojoTest {
                 new GitHooksParameters(true, gitDirectory, hooksDirectory, commitMsgParameters);
         AddGitHooksMojo mojo = new AddGitHooksMojo(basedir, parameters);
         File gitFolder = new File(basedir, gitDirectory);
-        gitFolder.mkdir();
+        boolean gitFolderCreated = gitFolder.mkdir();
+        assertTrue(gitFolderCreated);
         File gitHooksFile = new File(basedir, hooksDirectory);
-        gitHooksFile.createNewFile();
+        boolean gitHooksFolderCreated = gitHooksFile.createNewFile();
+        assertTrue(gitHooksFolderCreated);
         assertThrows(IllegalStateException.class, mojo::execute);
     }
 
@@ -91,9 +95,11 @@ class AddGitHooksMojoTest {
                 new GitHooksParameters(true, gitDirectory, hooksDirectory, commitMsgParameters);
         AddGitHooksMojo mojo = new AddGitHooksMojo(basedir, parameters);
         File gitFolder = new File(basedir, gitDirectory);
-        gitFolder.mkdir();
+        boolean gitFolderCreated = gitFolder.mkdir();
+        assertTrue(gitFolderCreated);
         File hooksFolder = new File(basedir, hooksDirectory);
-        hooksFolder.mkdir();
+        boolean gitHooksFolderCreated = hooksFolder.mkdir();
+        assertTrue(gitHooksFolderCreated);
         mojo.execute();
         assertTrue(Files.exists(Path.of(basedir.getPath(), hooksDirectory)));
     }
@@ -109,7 +115,8 @@ class AddGitHooksMojoTest {
         AddGitHooksMojo mojo = new AddGitHooksMojo(basedir, parameters);
         assertThrows(IllegalStateException.class, mojo::execute);
         File gitFile = new File(basedir, gitDirectoryName);
-        gitFile.createNewFile();
+        boolean gitFileCreated = gitFile.createNewFile();
+        assertTrue(gitFileCreated);
         assertThrows(IllegalStateException.class, mojo::execute);
     }
 

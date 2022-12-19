@@ -1,5 +1,6 @@
 package org.dev.spanciuc.maven.mojo.githooks;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.dev.spanciuc.maven.mojo.githooks.commit_msg.CommitMsgParameters;
@@ -8,7 +9,7 @@ import org.dev.spanciuc.maven.mojo.githooks.commit_msg.CommitMsgParameters;
  * A class to hold git hooks configuration's parameters..
  */
 @Value
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class GitHooksParameters {
 
     /**
@@ -30,6 +31,7 @@ public class GitHooksParameters {
     /**
      * Default value for enabled git hooks by default.
      */
+    @SuppressWarnings("ConstantConditions")
     public static final boolean DEFAULT_ENABLED = Boolean.parseBoolean(DEFAULT_ENABLED_AS_STRING);
 
     /**
@@ -43,6 +45,7 @@ public class GitHooksParameters {
      *
      * @return true if enabled, otherwise - false.
      */
+    @SuppressWarnings("JavadocDeclaration")
     boolean enabled;
 
     /**
@@ -50,6 +53,7 @@ public class GitHooksParameters {
      *
      * @return directory name.
      */
+    @SuppressWarnings("JavadocDeclaration")
     String gitDirectoryName;
 
     /**
@@ -57,6 +61,7 @@ public class GitHooksParameters {
      *
      * @return git hook's directory name.
      */
+    @SuppressWarnings("JavadocDeclaration")
     String gitHooksDirectoryName;
 
     /**
@@ -64,6 +69,7 @@ public class GitHooksParameters {
      *
      * @return commit message parameters.
      */
+    @SuppressWarnings("JavadocDeclaration")
     CommitMsgParameters commitMsg;
 
     /**
