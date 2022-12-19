@@ -49,14 +49,6 @@ public class Messages {
     /**
      * {@value}
      */
-    public static final String TYPE_BASEDIR = "Basedir";
-    /**
-     * {@value}
-     */
-    public static final String TYPE_GIT_HOOKS_CONFIGURATION = "Git hooks configuration";
-    /**
-     * {@value}
-     */
     public static final String CREATED_NUMBER_OF_HOOKS_MESSAGE = "Created %d git hook(s).";
     /**
      * {@value}
