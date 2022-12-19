@@ -1,49 +1,40 @@
 package org.dev.spanciuc.maven.mojo.githooks.commit_msg;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
 
 /**
  * A class to hold commit message configuration's parameters.
  */
 @Value
-@AllArgsConstructor
 public class CommitMsgParameters {
 
     /**
      * The default value for file name.
      */
     public static final String DEFAULT_FILE_NAME = "commit-msg";
-
-
     /**
      * The default enabled value as string.
      */
     public static final String DEFAULT_ENABLED_AS_STRING = "true";
-
     /**
      * The default enabled value.
      */
     @SuppressWarnings("ConstantConditions")
     public static final boolean DEFAULT_ENABLED = Boolean.parseBoolean(DEFAULT_ENABLED_AS_STRING);
-
     /**
      * The default header max length as string.
      */
     public static final String DEFAULT_HEADER_MAX_LENGTH_AS_STRING = "150";
-
     /**
      * The default header max length.
      */
     public static final int DEFAULT_HEADER_MAX_LENGTH =
             Integer.parseInt(DEFAULT_HEADER_MAX_LENGTH_AS_STRING);
-
     /**
      * The default commit types represented as a comma separated strings.
      */
     public static final String DEFAULT_TYPES =
             "feat,fix,chore,refactor,docs,style,test,perf,revert,merge";
-
     /**
      * Whether the hook is enabled.
      *
@@ -51,7 +42,6 @@ public class CommitMsgParameters {
      */
     @SuppressWarnings("JavadocDeclaration")
     boolean enabled;
-
     /**
      * The hook's file name.
      *
@@ -59,7 +49,6 @@ public class CommitMsgParameters {
      */
     @SuppressWarnings("JavadocDeclaration")
     String fileName;
-
     /**
      * The max allowed length for commit header. For unrestricted length
      * use:{@value
@@ -69,7 +58,6 @@ public class CommitMsgParameters {
      */
     @SuppressWarnings("JavadocDeclaration")
     int headerMaxLength;
-
     /**
      * The list of allowed commit types as comma separated values.
      *
@@ -77,6 +65,22 @@ public class CommitMsgParameters {
      */
     @SuppressWarnings("JavadocDeclaration")
     String types;
+
+    /**
+     * Creates an instance with parameters.
+     *
+     * @param enabled         enabled parameter.
+     * @param fileName        fileName parameter.
+     * @param headerMaxLength headerMaxLength parameter.
+     * @param types           types parameter
+     */
+    public CommitMsgParameters(boolean enabled, String fileName, int headerMaxLength,
+                               String types) {
+        this.enabled = enabled;
+        this.fileName = fileName;
+        this.headerMaxLength = headerMaxLength;
+        this.types = types;
+    }
 
     /**
      * Creates an instance with default values.

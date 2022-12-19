@@ -32,6 +32,14 @@ public class CommitMsgConfiguration implements GitHookConfiguration {
     static final int HEADER_MAX_LENGTH_MIN_ALLOWED_VALUE = 1;
 
     /**
+     * Whether the hook is enabled.
+     *
+     * @return true if enabled, otherwise - false.
+     */
+    @SuppressWarnings("JavadocDeclaration")
+    boolean enabled;
+
+    /**
      * The hook's file name.
      *
      * @return fileName.
@@ -39,13 +47,6 @@ public class CommitMsgConfiguration implements GitHookConfiguration {
     @SuppressWarnings("JavadocDeclaration")
     String fileName;
 
-    /**
-     * Whether the hook is enabled.
-     *
-     * @return true if enabled, otherwise - false.
-     */
-    @SuppressWarnings("JavadocDeclaration")
-    boolean enabled;
 
     /**
      * The max allowed length for commit header. For unrestricted length

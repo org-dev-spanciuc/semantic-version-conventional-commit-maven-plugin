@@ -13,11 +13,12 @@ import java.util.List;
  */
 public class GitHooksConfiguration {
 
+    private final boolean enabled;
+
     private final String gitDirectoryName;
 
     private final String gitHooksDirectoryName;
 
-    private final boolean enabled;
 
     private final List<GitHookConfiguration> gitHooksConfigurations;
 
